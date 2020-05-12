@@ -80,7 +80,7 @@ The Artiatomi Tutorial PDF mentioned above is also included in the official Arti
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## Acknowledgments
 
