@@ -127,15 +127,9 @@ case `select_opt "Run Artiatomi tools except Clicker" "Run Clicker" "Quit"` in
         sudo chown -R 0:0 $mount_path
         sudo docker run --gpus=all --net=host --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" --mount type=bind,source="$mount_path",target="$mount_path" --user root --name artia-clicker kmshin1397/artiatomi:latest Clicker
 
-        echo "Close down Artiatomi instance?"
-        case `select_opt "Yes" "No"` in
-            0)
-                sudo docker stop artia-clicker 
-                sudo docker rm artia-clicker;;
-            1) 
-                echo "To close down the Artiatomi container later, run close_artia.sh"
-                exit;;
-        esac
+        echo "Closing down Artiatomi instance"
+        sudo docker stop artia-clicker
+        sudo docker rm artia-clicker
 
         sudo chown -R $(id -u):$(id -g) $mount_path
         ;;
