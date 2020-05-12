@@ -1,3 +1,8 @@
+# This Dockerfile details how the Artiatomi image at kmshin1397/artiatomi:latest was built
+# to be pulled down by the start_artia.sh script. However, the Dockerfile should be moved 
+# to within the actual official Artiatomi repository before docker build is called with it
+# for the image to actually build properly.
+
 FROM nvidia/cudagl:10.2-devel as builder
 RUN apt-get update && apt-get install -y --no-install-recommends \
         mesa-utils \
