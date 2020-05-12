@@ -74,6 +74,19 @@ You will also need the standard Artiatomi Matlab functions found in the [officia
 
 The Artiatomi Tutorial PDF mentioned above is also included in the official Artiatomi repository, in LaTex form. If you do not have the means to compile it into a more presentable PDF on your local machine, you can copy paste the docs/Tutorial/Tutorial.tex file in the official Artiatomi repository into a file on an online LaTex editor like [Overleaf](https://www.overleaf.com/).
 
+### Example workflow
+
+Below is an example set of steps that can be taken to process a set of data using the provided scripts. Not all may be necessary case by case, i.e. alignment can be done with the included Clicker instead of IMOD then importing the IMOD alignments.
+
+1. Align stacks in an IMOD project using batchtomo
+2. Run **setup\_artia\_reconstructions.m** to transfer IMOD alignments and create Artiatomi MOTLs. 
+3. Run **get\_motl\_names\_and\_tomonrs.py** to output the MOTL paths created to be imported into Matlab later for averaging.
+4. Run **emsart_reconstruct.sh"** to reconstruct all the stacks using EmSART.
+5. Run **setup\_artia\_sta.m** to set up a SubTomogramAverageMPI run.
+6. Set up initial reference and configuration file for sub-tomogram averaging and run (see Artiatomi tutorial and [wiki](https://github.com/uermel/Artiatomi/wiki) for details).
+7. Run **refine\_align.m** to run interative local refinement for the tomograms based on the STA results.
+8. Run **refine\_extract.m** to extract the locally refinement particles to use for averaging again.
+
 ## Authors
 
 * **Kyung Min Shin** - California Institute of Technology
