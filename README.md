@@ -21,7 +21,7 @@ In addition, the following external packages are required and should thus be ins
 
 ### A quick introduction to Docker
 
-Docker is a tool which simplifies the software development and distribution process using containers. A container is an isolated unit of software and its dependencies designed to be portable and reliably compatible with varying computing environments. In the case of Artiatomi and this package, whenever the start_artia.sh script is called, it will spawn a Docker container on your machine which already contains Artiatomi and all of its dependencies. Simply put, this container will act as an isolated, virtual machine (it's not really a virtual machine in the traditional sense but that is beyond the scope of this introduction) which can run Artiatomi and has access to any files on the local machine you give it access to. You will be able to SSH into the Artiatomi container, or just open bash shells into it as with any other "remote" machine.
+Docker is a tool which simplifies the software development and distribution process using containers. A container is an isolated unit of software and its dependencies designed to be portable and reliably compatible with varying computing environments. In the case of Artiatomi and this package, whenever the start_artia.sh script is called, it will spawn a Docker container on your machine which already contains Artiatomi and all of its dependencies. Simply put, this container will act as an isolated, virtual machine (it's not really a virtual machine in the traditional sense but that is beyond the scope of this introduction) which can run Artiatomi and has access to any files on the local machine you give it access to. You will be able to SSH into the Artiatomi container, or just open bash shells into it (the **open\_artia\_shell.sh** script can do this for you) as with any other "remote" machine.
 
 ### Setting up artiatomi-tools
 
@@ -56,7 +56,7 @@ When you select this option, the **start_artia.sh script** will pull down the Ar
 
 Once the Artiatomi container has been started, the script will establish a SSH connection to the container from your local machine, setting up an SSH key. If successful, you should see a message telling you that Artiatomi is now set up on a port. Save this port number as you will need it to tell Matlab where to connect to to run Artiatomi tools when using the Matlab processing scripts.
 
-After the SSH connection is set up, the script will begin a shell into the Artiatomi container so that you may interact with it as if a normal shell on your own machine. The Artiatomi tools should already be added to the PATH in the shell; the directory you specified in the beginning should be available at the same path.
+After the SSH connection is set up, the script will begin a shell into the Artiatomi container so that you may interact with it as if a normal shell on your own machine. The Artiatomi tools should already be added to the PATH in the shell; the directory you specified in the beginning should be available at the same path. If you want additional shells into the Artiatomi container, you may run the **open\_artia\_shell.sh** to start a new shell.
 
 When you are finished with Artiatomi for now, you may call `exit` in this shell to close it; the script will then ask you if you want to shutdown the running container. You may keep it running to let other processes continue SSH-ing into it, but you will need to manually shut it down later using **close_artia.sh** before spawning a new Artiatomi container.
 

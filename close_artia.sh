@@ -1,4 +1,5 @@
 #!/bin/bash
+# This script stops and removes any running Artiatomi Docker containers.
 
 if $(sudo docker container ls | grep -q artia-clicker); then 
 	echo "Closing Artiatomi Clicker container"
