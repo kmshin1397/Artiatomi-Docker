@@ -66,9 +66,9 @@ This option will simply start the Clicker app with access to the directory you s
 
 *If you have multiple GPUs and you find the Clicker app not starting, it may help to go into the start_artia.sh script and edit the gpus option on line 128. You may try changing it from 'all' to a number for the GPU device ID, i.e 0 or 1.*
 
-## Using the Matlab scripts
+## Using the Matlab scripts/processing scripts provided
 
-To use the included Matlab scripts, add the matlab folder to your Matlab path within Matlab. you will need to change variables within the scripts, i.e. filepaths to your data. The scripts are based off the older code snippets found in the Artiatomi Tutorial PDF, so better context beyond what is found in the script comments may be found there. 
+To use the included Matlab scripts, add the matlab folder to your Matlab path within Matlab. you will need to change variables within the scripts, i.e. filepaths to your data. The scripts are based off the older code snippets found in the Artiatomi Tutorial PDF, so better context beyond what is found in the script comments may be found there. These are definitely not as general purpose as they could be and may need fiddling with to make work for your specific project. You will also find in the **processing_scripts** folder any non-Matlab scripts useful to processing cryo-ET data with Artiatomi as well.
 
 You will also need the standard Artiatomi Matlab functions found in the [official Artiatomi package](https://github.com/uermel/Artiatomi) itself. Since the Docker image in this repository contains all compiled tools for Artiatomi, you only need to clone the official repository to add its matlab folder to your Matlab path. 
 
