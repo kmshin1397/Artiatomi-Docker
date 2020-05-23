@@ -95,6 +95,10 @@ case `select_opt "Run Artiatomi tools except Clicker" "Run Clicker" "Quit"` in
             exit
         fi
 
+        # Save original permissions
+        ORIGPERMS="$(stat -c "%a" "$mount_path")"
+        echo $ORIGPERMS
+
         # Give ownership to the files to an "artiatomi" group so that the container and the user can access
         if grep -q "artiatomi" /etc/group;
         then
@@ -108,7 +112,11 @@ case `select_opt "Run Artiatomi tools except Clicker" "Run Clicker" "Quit"` in
             sudo addgroup artiatomi
             sudo usermod -a -G artiatomi $(id -un)
         fi
+
+        # Now set the mounted files to take the artiatomi group and let members of the group rw
         sudo chgrp -R artiatomi $mount_path
+        sudo chmod -R g+rwx $mount_path
+
         sudo docker run -d -P --gpus all --mount type=bind,source="$mount_path",target="$mount_path" --name artia --user root kmshin1397/artiatomi:latest /usr/sbin/sshd -D
 
         # Grab port for container and set up ssh for it
@@ -133,6 +141,7 @@ case `select_opt "Run Artiatomi tools except Clicker" "Run Clicker" "Quit"` in
 
         # Restore mounted dir ownership to previous owner
         sudo chgrp -R $(id -gn) $mount_path
+        sudo chmod -R $ORIGPERMS $mount_path
         ;;
     1)
         # Give ownership to the files to an "artiatomi" group so that the container and the user can access
@@ -149,6 +158,7 @@ case `select_opt "Run Artiatomi tools except Clicker" "Run Clicker" "Quit"` in
             sudo usermod -a -G artiatomi $(id -un)
         fi
         sudo chgrp -R artiatomi $mount_path
+        sudo chmod -R g+rwx $mount_path
         sudo docker run --gpus=all --net=host --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" --mount type=bind,source="$mount_path",target="$mount_path" --user root --name artia-clicker kmshin1397/artiatomi:latest Clicker
 
         echo "Closing down Artiatomi instance"
@@ -157,6 +167,7 @@ case `select_opt "Run Artiatomi tools except Clicker" "Run Clicker" "Quit"` in
 
         # Restore mounted dir ownership to previous owner
         sudo chgrp -R $(id -gn) $mount_path
+        sudo chmod -R $ORIGPERMS $mount_path
         ;;
     2)
         ;;
