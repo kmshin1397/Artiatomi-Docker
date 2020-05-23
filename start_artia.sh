@@ -95,8 +95,20 @@ case `select_opt "Run Artiatomi tools except Clicker" "Run Clicker" "Quit"` in
             exit
         fi
 
-        # Give ownership to the files to the container so they can write to it
-        sudo chown -R 1000:0 $mount_path
+        # Give ownership to the files to an "artiatomi" group so that the container and the user can access
+        if grep -q "artiatomi" /etc/group;
+        then
+            # If the artiatomi group exists, just add the user to it if necessary
+            if !$(groups | grep -q "artiatomi"); then
+                sudo usermod -a -G artiatomi $(id -un)
+            fi 
+        else
+            # If the artiatomi group does not exist, create it then add user to it
+            echo "group does not exist"
+            sudo addgroup artiatomi
+            sudo usermod -a -G artiatomi $(id -un)
+        fi
+        sudo chgrp -R artiatomi $mount_path
         sudo docker run -d -P --gpus all --mount type=bind,source="$mount_path",target="$mount_path" --name artia --user root kmshin1397/artiatomi:latest /usr/sbin/sshd -D
 
         # Grab port for container and set up ssh for it
@@ -120,18 +132,31 @@ case `select_opt "Run Artiatomi tools except Clicker" "Run Clicker" "Quit"` in
         esac
 
         # Restore mounted dir ownership to previous owner
-        sudo chown -R $(id -u):$(id -g) $mount_path
+        sudo chgrp -R $(id -gn) $mount_path
         ;;
     1)
-        # Give ownership to the files to the container so they can write to it
-        sudo chown -R 0:0 $mount_path
+        # Give ownership to the files to an "artiatomi" group so that the container and the user can access
+        if grep -q "artiatomi" /etc/group;
+        then
+            # If the artiatomi group exists, just add the user to it if necessary
+            if !$(groups | grep -q "artiatomi"); then
+                sudo usermod -a -G artiatomi $(id -un)
+            fi 
+        else
+            # If the artiatomi group does not exist, create it then add user to it
+            echo "group does not exist"
+            sudo addgroup artiatomi
+            sudo usermod -a -G artiatomi $(id -un)
+        fi
+        sudo chgrp -R artiatomi $mount_path
         sudo docker run --gpus=all --net=host --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" --mount type=bind,source="$mount_path",target="$mount_path" --user root --name artia-clicker kmshin1397/artiatomi:latest Clicker
 
         echo "Closing down Artiatomi instance"
         sudo docker stop artia-clicker
         sudo docker rm artia-clicker
 
-        sudo chown -R $(id -u):$(id -g) $mount_path
+        # Restore mounted dir ownership to previous owner
+        sudo chgrp -R $(id -gn) $mount_path
         ;;
     2)
         ;;

@@ -125,7 +125,7 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 
 EXPOSE 22
 
-RUN useradd -ms /bin/bash -u 1000 -g 0 -G root Artiatomi
+RUN useradd -ms /bin/bash -u 1000 -g 0 -G root,artiatomi Artiatomi
 RUN echo 'Artiatomi:Artiatomi' | chpasswd
 USER Artiatomi
 WORKDIR /home/Artiatomi
