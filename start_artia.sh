@@ -95,28 +95,6 @@ case `select_opt "Run Artiatomi tools except Clicker" "Run Clicker" "Quit"` in
             exit
         fi
 
-        # Save original permissions
-        ORIGPERMS="$(stat -c "%a" "$mount_path")"
-        echo $ORIGPERMS
-
-        # Give ownership to the files to an "artiatomi" group so that the container and the user can access
-        if grep -q "artiatomi" /etc/group;
-        then
-            # If the artiatomi group exists, just add the user to it if necessary
-            if !$(groups | grep -q "artiatomi"); then
-                sudo usermod -a -G artiatomi $(id -un)
-            fi 
-        else
-            # If the artiatomi group does not exist, create it then add user to it
-            echo "group does not exist"
-            sudo addgroup artiatomi
-            sudo usermod -a -G artiatomi $(id -un)
-        fi
-
-        # Now set the mounted files to take the artiatomi group and let members of the group rw
-        sudo chgrp -R artiatomi $mount_path
-        sudo chmod -R g+rwx $mount_path
-
         sudo docker run -d -P --gpus all --mount type=bind,source="$mount_path",target="$mount_path" --name artia --user root kmshin1397/artiatomi:latest /usr/sbin/sshd -D
 
         # Grab port for container and set up ssh for it
@@ -124,9 +102,10 @@ case `select_opt "Run Artiatomi tools except Clicker" "Run Clicker" "Quit"` in
         echo Artiatomi is now set up on on port "$PORT"
         sshpass -p Artiatomi ssh-copy-id -p $PORT -f -o StrictHostKeyChecking=no Artiatomi@localhost
 
-        # sudo docker cp "$HOME/.ssh/id_rsa.pub" artia:"/home/Artiatomi/.ssh/authorized_keys"
-        # sudo docker exec artia sudo chmod 700 /home/Artiatomi/.ssh
-        # sudo docker exec artia sudo chmod 600 /home/Artiatomi/.ssh/authorized_keys
+        # Set up Artiatomi user to mirror current host user
+        sudo docker exec --user root artia sh -c "groupadd -g $(id -g) artiatomi && usermod -u $(id -u) -g $(id -g) Artiatomi"
+
+        # Open shell as Artiatomi user
         sudo docker exec -it --user Artiatomi artia bash
 
         echo "Close down Artiatomi instance?"
@@ -139,34 +118,48 @@ case `select_opt "Run Artiatomi tools except Clicker" "Run Clicker" "Quit"` in
                 exit;;
         esac
 
-        # Restore mounted dir ownership to previous owner
-        sudo chgrp -R $(id -gn) $mount_path
-        sudo chmod -R $ORIGPERMS $mount_path
         ;;
     1)
+        ORIGPERMS="$(stat -c "%a" "$mount_path")"
+
         # Give ownership to the files to an "artiatomi" group so that the container and the user can access
         if grep -q "artiatomi" /etc/group;
         then
             # If the artiatomi group exists, just add the user to it if necessary
-            if !$(groups | grep -q "artiatomi"); then
+            if $(groups | grep -q "artiatomi"); then
+                echo "The artiatomi user group was detected. Good to proceed."
+            else
                 sudo usermod -a -G artiatomi $(id -un)
+                echo "The user was added to the artiatomi group. Please log out and log back in so before re-running the program."
+                exit;
             fi 
+            ARTIAGRP=$(cut -d: -f3 < <(getent group artiatomi))
         else
             # If the artiatomi group does not exist, create it then add user to it
-            echo "group does not exist"
-            sudo addgroup artiatomi
+            echo "The artiatomi group does not exist"
+            sudo groupadd artiatomi
+            echo "The group was created."
             sudo usermod -a -G artiatomi $(id -un)
+            echo "The user was added to the artiatomi group. Please log out and log back in so before re-running the program."
+            exit;
         fi
         sudo chgrp -R artiatomi $mount_path
         sudo chmod -R g+rwx $mount_path
-        sudo docker run --gpus=all --net=host --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" --mount type=bind,source="$mount_path",target="$mount_path" --user root --name artia-clicker kmshin1397/artiatomi:latest Clicker
+
+        sudo docker run --gpus=all --net=host --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" --mount type=bind,source="$mount_path",target="$mount_path" --user root  --group-add $ARTIAGRP --name artia-clicker kmshin1397/artiatomi:latest Clicker
+
+        # Set up Artiatomi user to mirror current host user
+        sudo docker exec --user root artia sh -c "groupadd -g $(id -g) artiatomi && usermod -u $(id -u) -g $(id -g) Artiatomi"
+
+        # "Add" the host artiatomit group to the container as well and change primary group of user to artiatomi group so files created are accessible even while app is running
+        sudo docker exec --user root artia-clicker groupadd -g $ARTIAGRP artiatomi && usermod -g artiatomi root
 
         echo "Closing down Artiatomi instance"
         sudo docker stop artia-clicker
         sudo docker rm artia-clicker
 
         # Restore mounted dir ownership to previous owner
-        sudo chgrp -R $(id -gn) $mount_path
+        sudo chown -R $(id -u):$(id -g) $mount_path
         sudo chmod -R $ORIGPERMS $mount_path
         ;;
     2)
