@@ -97,9 +97,6 @@ RUN apt-get install -y libatlas-base-dev
 # Eigen3
 RUN apt-get install -y libeigen3-dev
 # SuiteSparse and CXSparse (optional)
-# - If you want to build Ceres as a *static* library (the default)
-#   you can use the SuiteSparse package in the main Ubuntu package
-#   repository:
 RUN apt-get install -y libsuitesparse-dev
 COPY --from=executables /Artiatomi/ceres ./ceres
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.15.5/cmake-3.15.5-Linux-x86_64.sh \

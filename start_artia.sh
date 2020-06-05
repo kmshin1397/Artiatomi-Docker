@@ -148,12 +148,6 @@ case `select_opt "Run Artiatomi tools except Clicker" "Run Clicker" "Quit"` in
 
         sudo docker run --gpus=all --net=host --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" --mount type=bind,source="$mount_path",target="$mount_path" --user root  --group-add $ARTIAGRP --name artia-clicker kmshin1397/artiatomi:latest Clicker
 
-        # Set up Artiatomi user to mirror current host user
-        sudo docker exec --user root artia sh -c "groupadd -g $(id -g) artiatomi && usermod -u $(id -u) -g $(id -g) Artiatomi"
-
-        # "Add" the host artiatomit group to the container as well and change primary group of user to artiatomi group so files created are accessible even while app is running
-        sudo docker exec --user root artia-clicker groupadd -g $ARTIAGRP artiatomi && usermod -g artiatomi root
-
         echo "Closing down Artiatomi instance"
         sudo docker stop artia-clicker
         sudo docker rm artia-clicker

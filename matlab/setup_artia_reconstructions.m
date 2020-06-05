@@ -41,6 +41,10 @@ for i = 3 : length(directoryNames)
         % Set up default marker header
         [xdim, ydim, zdim] = size(ali);
         marker_struct = struct();
+        % The imod2emsart function converts the alignments per tilt, but 
+        % does not retain specific marker locations. Thus, we just pass in
+        % a fake, single marker position at (0,0,0)
+        marker_struct.model = [0.0, 0.0, 0.0];
         marker_struct.ali = ali;
         marker_struct.model = 1;
         marker_struct.dimX = xdim;
@@ -84,9 +88,9 @@ for i = 3 : length(directoryNames)
         peet_motl_table = readtable("IM_top_T4SS_YL_2kinitMOTL.csv");
         peet_motl = table2array(peet_motl_table);
         for i = 1:size(peet_motl, 1)
-            phi = tempMotl(17, i); 
-            psi = tempMotl(18, i); 
-            theta = tempMotl(19, i);
+            phi = peet_motl(17, i); 
+            psi = peet_motl(18, i); 
+            theta = peet_motl(19, i);
 
             new_motl(17:19, i) = peet_motl(i,17:19);
         end        
