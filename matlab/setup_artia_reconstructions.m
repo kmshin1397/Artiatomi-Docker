@@ -11,6 +11,10 @@
 % template file provided
 % 3) Build up an Artiatomi motl based on particle locations passed in via a
 % text/csv file and also load orientations for them based on PEET MOTL.
+%
+% IMPORTANT NOTE: It is important to reiterate that this is an example
+% script based on one particular project with a particular naming
+% convention for sub-directories
 
 
 project_root = '/data/kshin/JV9082_42k_ctf-SIRT';
@@ -33,10 +37,10 @@ for i = 3 : length(directoryNames)
         current_full_path = tlt_file_struct(1).folder;
         imod_root = current_full_path + "/" + basename;
         marker_output = current_full_path + "/" + basename + '_markers.em';
-        
+
         %% Set up marker file
         % Convert IMOD alignment to Artia marker alignment
-        ali = artia.geo.imod2emsart(imod_root);
+        ali = artia.geo.imod2emsart(char(imod_root));
         
         % Set up default marker header
         [xdim, ydim, zdim] = size(ali);
@@ -58,7 +62,7 @@ for i = 3 : length(directoryNames)
         marker_struct.imageSizeY = 2000;
 
         % Write out new marker file
-        artia.marker.write(marker_struct, marker_output);
+        artia.marker.write(marker_struct, char(marker_output));
         
         % Set up config file
         % Copy over base config file 
@@ -88,10 +92,6 @@ for i = 3 : length(directoryNames)
         peet_motl_table = readtable("IM_top_T4SS_YL_2kinitMOTL.csv");
         peet_motl = table2array(peet_motl_table);
         for i = 1:size(peet_motl, 1)
-            phi = peet_motl(17, i); 
-            psi = peet_motl(18, i); 
-            theta = peet_motl(19, i);
-
             new_motl(17:19, i) = peet_motl(i,17:19);
         end        
         

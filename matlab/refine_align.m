@@ -52,6 +52,8 @@ opts.STA = 'SubTomogramAverageMPI';
 opts.STA_dir = '/home/kshin/Documents/repositories/Artiatomi/build';
 opts.remote = true;
 opts.host = 'Artiatomi@localhost';
+% This should be the port number given by start_artia.sh when the Docker
+% container is started
 opts.port = 'port number';
 
 % Reconstruction parameters
