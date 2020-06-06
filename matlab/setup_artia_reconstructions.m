@@ -50,7 +50,6 @@ for i = 3 : length(directoryNames)
         % a fake, single marker position at (0,0,0)
         marker_struct.model = [0.0, 0.0, 0.0];
         marker_struct.ali = ali;
-        marker_struct.model = 1;
         marker_struct.dimX = xdim;
         marker_struct.dimY = ydim;
         marker_struct.dimZ = zdim;
