@@ -209,7 +209,8 @@ function iterative_alignment(opts)
         % Run first alignment for beam declination
         format1 = '%s -i %s -o %s -a %d -w %d -h %d --maAmount %f --maAngle %f --phi %f --iter 20 --iterSwitch 10 --doPsi --doFixedPsi --doPhi\n';
         com1 = sprintf(format1, opts.cAligner, newMarkFile, alignedMarkFile, idx-1, opts.imDim(1), opts.imDim(2), opts.maAmount, opts.maAngle, mFile.beamDeclination);
-        system(com1);
+        % system(com1);
+        artia.mpi.run(com1, opts.nodes, "", 'runRemote', opts.remote, 'remoteHost', opts.host, 'remotePort', opts.port, 'suppressOutput', false);
         
         % Load file to get beam declination
         mFile = artia.marker.read(alignedMarkFile);
@@ -217,7 +218,8 @@ function iterative_alignment(opts)
         % Run second alignment for tilt angles + image roation
         format2 = '%s -i %s -o %s -a %d -w %d -h %d --maAmount %f --maAngle %f --phi %f --iter 20 --iterSwitch 10 --doPsi --doTheta\n';
         com2 = sprintf(format2, opts.cAligner, newMarkFile, alignedMarkFile, idx-1, opts.imDim(1), opts.imDim(2), opts.maAmount, opts.maAngle, mFile.beamDeclination);
-        system(com2);
+        % system(com2);
+        artia.mpi.run(com2, opts.nodes, "", 'runRemote', opts.remote, 'remoteHost', opts.host, 'remotePort', opts.port, 'suppressOutput', false);
         
         % Retrieve the new coordinates %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         disp('Making new motivelist ...')
